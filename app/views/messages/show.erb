@@ -1,0 +1,20 @@
+<h1><%= @message.title %></h1>
+
+<p>
+Created at: <%= @message.created_at %>
+</p>
+
+<p>
+  Author: <%= @message.author %>
+</p>
+
+<p>
+  <%= @message.content  %>
+</p>
+
+<p>
+  Other messages from this author: 
+</p>
+
+<hr/>
+<a href="/messages">Back to All Messages</a>

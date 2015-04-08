@@ -1,0 +1,81 @@
+<h1>Home Page</h1>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<form id="search_form">
+  <div>
+    <label>Search:</label>
+    <input id="search-input" type="text" name="search">
+  </div>
+
+  <div>
+    <input id="search-one" type="submit" value="Submit" >
+  </div>
+
+</form>
+
+<script>
+
+// $('#search-input').on('keyup', function(e){
+//   input = $('#search-input').val();
+//   console.log(input);
+//   var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
+//   console.log(url);
+//   $.getJSON(url).done(function(hashcities){
+//     console.log(hashcities);
+//     // debugger
+//     cities = hashcities.RESULTS;
+//     $('#cities-info > h3').empty();
+//        if (input != "") {
+//        $.each(cities, function(index, value){
+//         console.log(value);
+//           $('#cities-info').append( '<h3>' + value.name + '</h3>');
+//        });
+//       }
+//      });
+//  });
+
+$('#search-input').on('keyup', function(e){
+  input = $('#search-input').val();
+  console.log(input);
+  var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
+  console.log(url);
+  $.getJSON(url).done(function(hashcities){
+    // debugger
+    cities = hashcities.RESULTS;
+    if (input !== "") {
+      array = [];
+      $.each(cities, function(index, value){
+        array.push(value.name);
+      });
+      $(function() {
+        var availableTags = array;
+        console.log(availableTags);
+        $( "#search-input" ).autocomplete({
+          source: availableTags
+        });
+      });
+    };
+  });
+});
+
+// $(function() {
+//     var availableTags = array;
+//     console.log(availableTags);
+//     $( "#search-input" ).autocomplete({
+//       source: availableTags
+//     });
+//   });
+
+// $.ajax({
+//    url: i,
+//    method: 'GET',
+//    dataType: 'jsonp'
+//    });
+// });
+</script>
+
+<div id="cities-info">
+  <h3 class="info"> </h3>
+</div>
