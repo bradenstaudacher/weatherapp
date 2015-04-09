@@ -17,47 +17,75 @@
 
 <script>
 
-// $('#search-input').on('keyup', function(e){
-//   input = $('#search-input').val();
-//   console.log(input);
-//   var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
-//   console.log(url);
-//   $.getJSON(url).done(function(hashcities){
-//     console.log(hashcities);
-//     // debugger
-//     cities = hashcities.RESULTS;
-//     $('#cities-info > h3').empty();
-//        if (input != "") {
-//        $.each(cities, function(index, value){
-//         console.log(value);
-//           $('#cities-info').append( '<h3>' + value.name + '</h3>');
-//        });
-//       }
-//      });
-//  });
+$('#search-one').on('click', function(e){
+              e.preventDefault();
+              searchterm = $('#search-input').val();
+              console.log("SEARCH", searchterm);
+              
+              function getlatlong(searchterm, done) {
+                $.ajax({
+                    method: 'GET',
+                    url: 'http://autocomplete.wunderground.com/aq',
+                    data: {
+                        query: searchterm
+                    },
+                    dataType: 'jsonp',
+                    jsonp: 'cb',
+                    // success: function (response) {
+                    //   console.log("DATA", response);
+                    //   done(response.RESULTS);
+                    //   // console.log(response['RESULTS'][0].zmw + '.json');
+                            
+                    // },
+                    success: done,
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+                console.log("return from function");
+              };
 
-// $('#search-input').on('keyup', function(e){
-//   input = $('#search-input').val();
-//   console.log(input);
-//   var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
-//   console.log(url);
-//   $.getJSON(url).done(function(hashcities){
-//     // debugger
-//     cities = hashcities.RESULTS;
-//     if (input !== "") {
-//       array = [];
-//       $.each(cities, function(index, value){
-//         array.push(value.name);
-//       });
-//         var availableTags = array;
-//         console.log(availableTags);
-//         $( "#search-input" ).autocomplete({
-//           source: availableTags
-//         });
-      
-//     };
-//   });
+              var responseCallback = function(result) {
+
+                  var zmw = result['RESULTS'][0].zmw + '.json'
+                  console.log("THIS BE ZMW", zmw)
+                  $.ajax({
+                    method: 'GET',
+                    url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
+                    // data: {
+                    //     zmw: zmw
+
+                    // },
+                    dataType: 'jsonp',
+                    success: function (data) {
+                      console.log("WEATHERDATA", data);
+                      $('#cities-info > h3').empty();
+                      value = data['current_observation'];
+                      $('#cities-info').append( '<h3>' + 'current temperature: ' + value.temperature_string + '<br>' + 'weather: ' + value.weather + '<br>' + 'wind direction: ' + value.wind_dir + '<br>' + 'wind speed(kmh): ' + value.wind_kph + '</h3>');
+                      
+                    },
+                    error: function () {
+                        console.log(error);
+                    }
+                });
+
+              }
+
+              getlatlong(searchterm, responseCallback);
+
+              // console.log(getlatlong(searchterm))
+
+
+              
+});
+
+// $.ajax({
+//    url:
+//    method: 'GET',
+//    dataType: 'jsonp'
+//    });
 // });
+
 </script>
 <script>
     $(function () {
@@ -88,24 +116,6 @@
             }
         });
     });
-</script>
-
-
-<script>
-// $(function() {
-//     var availableTags = array;
-//     console.log(availableTags);
-//     $( "#search-input" ).autocomplete({
-//       source: availableTags
-//     });
-//   });
-
-// $.ajax({
-//    url: i,
-//    method: 'GET',
-//    dataType: 'jsonp'
-//    });
-// });
 </script>
 
 <div id="cities-info">
