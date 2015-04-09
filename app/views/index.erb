@@ -36,30 +36,62 @@
 //      });
 //  });
 
-$('#search-input').on('keyup', function(e){
-  input = $('#search-input').val();
-  console.log(input);
-  var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
-  console.log(url);
-  $.getJSON(url).done(function(hashcities){
-    // debugger
-    cities = hashcities.RESULTS;
-    if (input !== "") {
-      array = [];
-      $.each(cities, function(index, value){
-        array.push(value.name);
-      });
-      $(function() {
-        var availableTags = array;
-        console.log(availableTags);
-        $( "#search-input" ).autocomplete({
-          source: availableTags
+// $('#search-input').on('keyup', function(e){
+//   input = $('#search-input').val();
+//   console.log(input);
+//   var url = 'http://autocomplete.wunderground.com/aq?cb=?&query=' + input
+//   console.log(url);
+//   $.getJSON(url).done(function(hashcities){
+//     // debugger
+//     cities = hashcities.RESULTS;
+//     if (input !== "") {
+//       array = [];
+//       $.each(cities, function(index, value){
+//         array.push(value.name);
+//       });
+//         var availableTags = array;
+//         console.log(availableTags);
+//         $( "#search-input" ).autocomplete({
+//           source: availableTags
+//         });
+      
+//     };
+//   });
+// });
+</script>
+<script>
+    $(function () {
+        var acXHR;
+        $('#search-input').autocomplete({
+            delay: 0,
+            source: function (req, resCB) {
+                // if (acXHR) {
+                //     acXHR.abort(); This is important for when type is json
+                // }
+                acXHR = $.ajax({
+                    method: 'GET',
+                    url: 'http://autocomplete.wunderground.com/aq',
+                    data: {
+                        query: req.term
+                    },
+                    dataType: 'jsonp',
+                    jsonp: 'cb',
+                    success: function (data) {
+                        resCB(data['RESULTS'].map(function (city) {
+                            return city.name;
+                        }));
+                    },
+                    error: function () {
+                        resCB();
+                    }
+                });
+            }
         });
-      });
-    };
-  });
-});
+    });
+</script>
 
+
+<script>
 // $(function() {
 //     var availableTags = array;
 //     console.log(availableTags);
